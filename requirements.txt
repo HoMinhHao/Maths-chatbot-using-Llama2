@@ -1,4 +1,4 @@
-ctransformer
+ctransformers
 sentence-transformers
 pinecone-client
 langchain
