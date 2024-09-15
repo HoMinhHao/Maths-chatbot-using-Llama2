@@ -1,0 +1,5 @@
+ctransformer
+sentence-transformers
+pinecone-client
+langchain
+flask
