@@ -1,9 +1,8 @@
 from flask import Flask, render_template, jsonify, request
 from src.helper import download_huggingface_embedding
 from langchain.vectorstores import Pinecone as PC
-from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
-from langchain_core.prompts import PromptTemplate
+from langchain.prompts import PromptTemplate
 from dotenv import load_dotenv
 from langchain.llms import CTransformers
 from src.prompt import *
@@ -32,7 +31,7 @@ llm=CTransformers(model="model/llama-2-7b.ggmlv3.q4_0.bin",
 qa=RetrievalQA.from_chain_type(
     llm=llm,
     chain_type="stuff",
-    retriever=docsearch.as_retriever(search_kwargs={'k':2}),
+    retriever=docsearch.as_retriever(search_kwargs={'k':3}),
     return_source_documents=True,
     chain_type_kwargs=chain_type_kwargs
 )
@@ -41,5 +40,14 @@ qa=RetrievalQA.from_chain_type(
 def index():
     return render_template("chat.html")
 
+@app.route("/get", methods=["GET", "POST"])
+def chat():
+    msg=request.form["msg"]
+    input=msg
+    print(input)
+    result=qa({"query":input})
+    print(result["result"])
+    return str(result["result"])
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=8080, debug=True)
